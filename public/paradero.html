@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Otto Junior · Paradero</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="screen">
+  <header class="topbar">
+    <a class="back" href="index.html">←</a>
+    <h1>Aviso de paradero</h1>
+    <span class="badge offline">Sin señal</span>
+  </header>
+
+  <div class="alert-card">
+    <div class="label">Próxima bajada en</div>
+    <div class="km">3.2 km</div>
+    <div class="label">Pozo Almonte</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Pasajeros que bajan aquí</div>
+    <div class="passenger-row">
+      <div class="name">Juan Pérez</div>
+      <div class="seat-tag">A14</div>
+    </div>
+    <div class="passenger-row">
+      <div class="name">Rosa Díaz</div>
+      <div class="seat-tag">C07</div>
+    </div>
+  </div>
+
+  <div class="section-title">Próximos paraderos del viaje</div>
+  <div class="card">
+    <div class="passenger-row">
+      <div>
+        <div class="name">Pozo Almonte</div>
+        <div class="dest">2 pasajeros</div>
+      </div>
+      <div class="seat-tag" style="background:var(--ok); color:#111;">3.2 km</div>
+    </div>
+    <div class="passenger-row">
+      <div>
+        <div class="name">Calama</div>
+        <div class="dest">5 pasajeros</div>
+      </div>
+      <div class="seat-tag" style="background:#3a3f4a;">210 km</div>
+    </div>
+    <div class="passenger-row">
+      <div>
+        <div class="name">Antofagasta</div>
+        <div class="dest">8 pasajeros</div>
+      </div>
+      <div class="seat-tag" style="background:#3a3f4a;">340 km</div>
+    </div>
+  </div>
+
+  <a class="btn secondary" href="#">+ Agregar paradero (buscar o elegir guardado)</a>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

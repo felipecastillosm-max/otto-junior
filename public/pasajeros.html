@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Otto Junior · Pasajeros</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="screen">
+  <header class="topbar">
+    <a class="back" href="index.html">←</a>
+    <h1>Pasajeros</h1>
+    <span class="badge online">En línea</span>
+  </header>
+
+  <input class="search" placeholder="Buscar nombre..." id="search">
+
+  <div class="card" id="lista">
+    <div class="passenger-row">
+      <div>
+        <div class="name">Juan Pérez</div>
+        <div class="dest">Baja en: Pozo Almonte</div>
+      </div>
+      <div class="seat-tag">A14</div>
+    </div>
+    <div class="passenger-row">
+      <div>
+        <div class="name">María González</div>
+        <div class="dest">Baja en: Calama</div>
+      </div>
+      <div class="seat-tag">B03</div>
+    </div>
+    <div class="passenger-row">
+      <div>
+        <div class="name">Pedro Soto</div>
+        <div class="dest">Sin asiento asignado</div>
+      </div>
+      <div class="seat-tag" style="background:#3a3f4a;">-</div>
+    </div>
+  </div>
+
+  <a class="btn secondary" href="#" id="add-btn">+ Agregar pasajero nuevo</a>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
