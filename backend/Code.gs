@@ -1,3 +1,5 @@
+const APP_FOLDER_ID = "19Tcc1JIIixIXeX0WcYHGjXxkxWxfdI35";
+
 function doGet(e) {
   const action = e.parameter.action;
 
@@ -89,8 +91,7 @@ function getSheet(name) {
 }
 
 function moveToAppFolder(fileId) {
-  const folders = DriveApp.getFoldersByName("aplicaciones");
-  const folder = folders.hasNext() ? folders.next() : DriveApp.createFolder("aplicaciones");
+  const folder = DriveApp.getFolderById(APP_FOLDER_ID);
   const file = DriveApp.getFileById(fileId);
   folder.addFile(file);
   DriveApp.getRootFolder().removeFile(file);
