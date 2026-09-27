@@ -1,3 +1,6 @@
 name = "otto-junior"
 main = "src/index.js"
 compatibility_date = "2024-09-01"
+
+[vars]
+APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUb6UlXLr7X-pCuZoYmhB-F5nALX_XobW28Xe2auOpZktqSYiT1bZlgWJpgOKg1tTIEg/exec"
