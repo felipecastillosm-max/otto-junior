@@ -73,6 +73,7 @@ function getSheet(name) {
     spreadsheet = SpreadsheetApp.openById(sheetId);
   } else {
     spreadsheet = SpreadsheetApp.create("Otto Junior - Base de datos");
+    moveToAppFolder(spreadsheet.getId());
     props.setProperty("SHEET_ID", spreadsheet.getId());
   }
 
@@ -85,6 +86,14 @@ function getSheet(name) {
   }
 
   return sheet;
+}
+
+function moveToAppFolder(fileId) {
+  const folders = DriveApp.getFoldersByName("aplicaciones");
+  const folder = folders.hasNext() ? folders.next() : DriveApp.createFolder("aplicaciones");
+  const file = DriveApp.getFileById(fileId);
+  folder.addFile(file);
+  DriveApp.getRootFolder().removeFile(file);
 }
 
 function jsonResponse(data) {
