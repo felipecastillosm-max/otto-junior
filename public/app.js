@@ -1,3 +1,5 @@
+const API_BASE = "http://localhost:8787";
+
 const netBadge = document.getElementById("net-badge");
 
 function updateNetStatus() {
@@ -14,3 +16,17 @@ function updateNetStatus() {
 window.addEventListener("online", updateNetStatus);
 window.addEventListener("offline", updateNetStatus);
 updateNetStatus();
+
+async function apiGet(action) {
+  const res = await fetch(`${API_BASE}/?action=${action}`);
+  return res.json();
+}
+
+async function apiPost(action, data) {
+  const res = await fetch(`${API_BASE}/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, ...data })
+  });
+  return res.json();
+}

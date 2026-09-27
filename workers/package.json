@@ -1,0 +1,10 @@
+{
+  "name": "otto-junior-worker",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

@@ -11,37 +11,90 @@
   <header class="topbar">
     <a class="back" href="index.html">←</a>
     <h1>Pasajeros</h1>
-    <span class="badge online">En línea</span>
+    <span class="badge online" id="net-badge">En línea</span>
   </header>
 
   <input class="search" placeholder="Buscar nombre..." id="search">
 
   <div class="card" id="lista">
-    <div class="passenger-row">
-      <div>
-        <div class="name">Juan Pérez</div>
-        <div class="dest">Baja en: Pozo Almonte</div>
-      </div>
-      <div class="seat-tag">A14</div>
-    </div>
-    <div class="passenger-row">
-      <div>
-        <div class="name">María González</div>
-        <div class="dest">Baja en: Calama</div>
-      </div>
-      <div class="seat-tag">B03</div>
-    </div>
-    <div class="passenger-row">
-      <div>
-        <div class="name">Pedro Soto</div>
-        <div class="dest">Sin asiento asignado</div>
-      </div>
-      <div class="seat-tag" style="background:#3a3f4a;">-</div>
-    </div>
+    <div style="color:var(--text-dim); text-align:center; padding:10px;">Cargando...</div>
+  </div>
+
+  <div class="card" id="form-nuevo" style="display:none;">
+    <div class="section-title">Nuevo pasajero</div>
+    <input class="search" placeholder="Nombre" id="nuevo-nombre" style="margin-bottom:8px;">
+    <input class="search" placeholder="Asiento (ej: A14)" id="nuevo-asiento" style="margin-bottom:8px;">
+    <input class="search" placeholder="Baja en (paradero)" id="nuevo-paradero" style="margin-bottom:8px;">
+    <button class="btn" id="guardar-btn">Guardar</button>
   </div>
 
   <a class="btn secondary" href="#" id="add-btn">+ Agregar pasajero nuevo</a>
 </div>
 <script src="app.js"></script>
+<script>
+let pasajeros = [];
+
+function renderLista(items) {
+  const lista = document.getElementById("lista");
+
+  if (items.length === 0) {
+    lista.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:10px;">Sin pasajeros todavía</div>';
+    return;
+  }
+
+  lista.innerHTML = items.map(function (p) {
+    return `
+      <div class="passenger-row">
+        <div>
+          <div class="name">${p.nombre}</div>
+          <div class="dest">${p.estado === "bajado" ? "Ya bajó" : "Baja en: " + (p.paradero || "sin definir")}</div>
+        </div>
+        <div class="seat-tag" style="${p.estado === 'bajado' ? 'background:#3a3f4a;' : ''}">${p.asiento || "-"}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function cargarPasajeros() {
+  try {
+    pasajeros = await apiGet("listPasajeros");
+    renderLista(pasajeros);
+  } catch (err) {
+    document.getElementById("lista").innerHTML =
+      '<div style="color:var(--danger); text-align:center; padding:10px;">No se pudo conectar al backend (¿está corriendo wrangler dev?)</div>';
+  }
+}
+
+document.getElementById("search").addEventListener("input", function (e) {
+  const q = e.target.value.toLowerCase();
+  renderLista(pasajeros.filter(function (p) {
+    return p.nombre.toLowerCase().includes(q);
+  }));
+});
+
+document.getElementById("add-btn").addEventListener("click", function (e) {
+  e.preventDefault();
+  document.getElementById("form-nuevo").style.display = "block";
+});
+
+document.getElementById("guardar-btn").addEventListener("click", async function () {
+  const nombre = document.getElementById("nuevo-nombre").value.trim();
+  const asiento = document.getElementById("nuevo-asiento").value.trim();
+  const paradero = document.getElementById("nuevo-paradero").value.trim();
+
+  if (!nombre) return;
+
+  await apiPost("addPasajero", { nombre, asiento, paradero });
+
+  document.getElementById("nuevo-nombre").value = "";
+  document.getElementById("nuevo-asiento").value = "";
+  document.getElementById("nuevo-paradero").value = "";
+  document.getElementById("form-nuevo").style.display = "none";
+
+  cargarPasajeros();
+});
+
+cargarPasajeros();
+</script>
 </body>
 </html>
