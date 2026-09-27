@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - claude/gifted-heisenberg-mvyjbt
     paths:
       - "backend/**"
       - ".clasp.json"

@@ -3,6 +3,10 @@ const APP_FOLDER_ID = "19Tcc1JIIixIXeX0WcYHGjXxkxWxfdI35";
 function doGet(e) {
   const action = e.parameter.action;
 
+  if (action === "ping") {
+    return jsonResponse({ ok: true, servicio: "Otto Junior", hora: new Date() });
+  }
+
   if (action === "listPasajeros") {
     return jsonResponse(listPasajeros());
   }
