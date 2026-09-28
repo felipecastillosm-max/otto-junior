@@ -99,7 +99,9 @@ header.topbar h1 .icon {
 }
 
 .btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   padding: 20px;
   font-size: 18px;
@@ -112,6 +114,12 @@ header.topbar h1 .icon {
   text-decoration: none;
   margin-bottom: 14px;
   cursor: pointer;
+}
+
+.nav-icon {
+  height: 40px;
+  width: auto;
+  margin-right: 12px;
 }
 
 .btn.secondary {
