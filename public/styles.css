@@ -49,18 +49,9 @@ header.topbar h1 {
   margin: 0;
 }
 
-.brand-title {
-  font-family: 'Anton', sans-serif;
-  font-size: 28px;
-  color: #ffffff;
-  letter-spacing: 1px;
-  transform: skewX(-6deg);
-  text-shadow:
-    -1.5px -1.5px 0 #000,
-    1.5px -1.5px 0 #000,
-    -1.5px 1.5px 0 #000,
-    1.5px 1.5px 0 #000,
-    3px 3px 0 var(--secondary);
+.wordmark {
+  height: 30px;
+  width: auto;
 }
 
 .trip-card {
@@ -76,6 +67,51 @@ header.topbar h1 {
   height: 90px;
   width: auto;
   flex-shrink: 0;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.map-card, .actions-card {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-placeholder {
+  flex: 1;
+  min-height: 120px;
+  border-radius: 12px;
+  background-image:
+    linear-gradient(rgba(0,185,166,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,185,166,0.06) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-color: #12161c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bus-marker {
+  width: 56px;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+}
+
+.actions-card {
+  justify-content: center;
+  gap: 8px;
+}
+
+.actions-card .btn {
+  padding: 12px 8px;
+  font-size: 13px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 .badge {
