@@ -47,14 +47,35 @@ header.topbar .back {
 header.topbar h1 {
   font-size: 20px;
   margin: 0;
-  display: flex;
-  align-items: center;
 }
 
-.logo {
-  height: 32px;
+.brand-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 28px;
+  color: #ffffff;
+  letter-spacing: 1px;
+  transform: skewX(-6deg);
+  text-shadow:
+    -1.5px -1.5px 0 #000,
+    1.5px -1.5px 0 #000,
+    -1.5px 1.5px 0 #000,
+    1.5px 1.5px 0 #000,
+    3px 3px 0 var(--secondary);
+}
+
+.trip-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trip-info { flex: 1; }
+
+.trip-logo {
+  height: 90px;
   width: auto;
-  margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .badge {
@@ -81,23 +102,6 @@ header.topbar h1 {
 .badge.offline::before { background: var(--danger); }
 .badge.online { color: var(--secondary); }
 
-.icon {
-  width: 20px;
-  height: 20px;
-  stroke: var(--secondary);
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-header.topbar h1 .icon {
-  width: 24px;
-  height: 24px;
-}
-
 .btn {
   display: flex;
   align-items: center;
@@ -114,12 +118,6 @@ header.topbar h1 .icon {
   text-decoration: none;
   margin-bottom: 14px;
   cursor: pointer;
-}
-
-.nav-icon {
-  height: 40px;
-  width: auto;
-  margin-right: 12px;
 }
 
 .btn.secondary {

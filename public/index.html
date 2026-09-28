@@ -5,24 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Otto Junior</title>
 <link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="screen">
   <header class="topbar">
-    <h1><img src="assets/logo.webp" alt="Otto Junior" class="logo">Otto Junior</h1>
+    <h1 class="brand-title">Otto Junior</h1>
     <span class="badge online" id="net-badge">En línea</span>
   </header>
 
-  <div class="card">
-    <div class="section-title"><strong>Viaje actual</strong></div>
-    <div style="font-size:18px; font-weight:600;">Iquique → Santiago</div>
-    <div style="color:var(--text-dim); font-size:14px;">32 pasajeros a bordo</div>
+  <div class="card trip-card">
+    <div class="trip-info">
+      <div class="section-title"><strong>Viaje actual</strong></div>
+      <div style="font-size:18px; font-weight:600;">Iquique → Santiago</div>
+      <div style="color:var(--text-dim); font-size:14px;">32 pasajeros a bordo</div>
+    </div>
+    <img src="assets/logo.webp" alt="Otto Junior" class="trip-logo">
   </div>
 
-  <a class="btn big" href="pasajeros.html"><img src="assets/icon-pasajeros.png" alt="" class="nav-icon">Relación de pasajeros</a>
-  <a class="btn big" href="paradero.html"><img src="assets/icon-paradero.png" alt="" class="nav-icon">Aviso de paradero</a>
-  <a class="btn big" href="reporte.html"><img src="assets/icon-reporte.png" alt="" class="nav-icon">Reporte WhatsApp</a>
+  <a class="btn big" href="pasajeros.html">Relación de pasajeros</a>
+  <a class="btn big" href="paradero.html">Aviso de paradero</a>
+  <a class="btn big" href="reporte.html">Reporte WhatsApp</a>
 </div>
 <script src="app.js"></script>
 </body>
