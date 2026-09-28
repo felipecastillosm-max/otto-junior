@@ -145,7 +145,7 @@ header.topbar h1 {
   background: #ffce00;
   border: 3px solid #111;
   border-radius: 6px;
-  padding: 6px 8px;
+  padding: 10px 12px;
 }
 
 .mini-alert-title {
@@ -155,13 +155,15 @@ header.topbar h1 {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: center;
+  line-height: 1.5;
 }
 
 .mini-alert-label {
   font-size: 10px;
   color: #111;
-  margin-top: 4px;
+  margin-top: 6px;
   text-align: center;
+  line-height: 1.6;
 }
 
 .mini-alert-label strong {
@@ -174,7 +176,7 @@ header.topbar h1 {
   background: var(--danger);
   color: #ffffff;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
 }
 
