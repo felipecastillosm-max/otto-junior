@@ -56,10 +56,39 @@ header.topbar h1 {
   color: var(--text-dim);
   padding: 6px 10px;
   border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.badge.offline { color: var(--danger); }
-.badge.online { color: var(--ok); }
+.badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.badge.offline { color: var(--secondary); }
+.badge.offline::before { background: var(--danger); }
+.badge.online { color: var(--secondary); }
+
+.icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--secondary);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+header.topbar h1 .icon {
+  width: 24px;
+  height: 24px;
+}
 
 .btn {
   display: block;
