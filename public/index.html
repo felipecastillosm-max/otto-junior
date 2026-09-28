@@ -26,9 +26,17 @@
   <div class="home-grid">
     <div class="card map-card">
       <div class="map-placeholder">
+        <svg class="route-line" viewBox="0 0 200 120" preserveAspectRatio="none">
+          <path d="M10,105 Q55,25 100,60 T190,15" stroke="var(--accent)" stroke-width="3" fill="none" stroke-dasharray="6 6" opacity="0.55"/>
+          <circle cx="10" cy="105" r="4" fill="var(--accent)" opacity="0.7"/>
+          <circle cx="190" cy="15" r="4" fill="var(--secondary)" opacity="0.7"/>
+        </svg>
         <img src="assets/bus-marker.png" alt="Bus" class="bus-marker">
       </div>
-      <div class="section-title" style="margin-top:10px;">Ubicación en vivo</div>
+      <div class="mini-alert">
+        <div class="mini-alert-km">3.2 km</div>
+        <div class="mini-alert-label">Próximo: Pozo Almonte</div>
+      </div>
     </div>
 
     <div class="card actions-card">
@@ -37,6 +45,11 @@
       <a class="btn" href="reporte.html">Reporte WhatsApp</a>
     </div>
   </div>
+
+  <footer class="footer-credits">
+    Felipe Rulo Castillo · Soluciones digitales con IA<br>
+    <a href="mailto:rulo@corvalia.cl">rulo@corvalia.cl</a>
+  </footer>
 </div>
 <script src="app.js"></script>
 </body>

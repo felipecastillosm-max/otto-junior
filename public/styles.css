@@ -72,6 +72,7 @@ header.topbar h1 {
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -83,7 +84,8 @@ header.topbar h1 {
 }
 
 .map-placeholder {
-  flex: 1;
+  position: relative;
+  overflow: hidden;
   min-height: 120px;
   border-radius: 12px;
   background-image:
@@ -96,14 +98,43 @@ header.topbar h1 {
   justify-content: center;
 }
 
+.route-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .bus-marker {
+  position: relative;
+  z-index: 1;
   width: 56px;
   height: auto;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
 }
 
+.mini-alert {
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--secondary), var(--danger));
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+}
+
+.mini-alert-km {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.mini-alert-label {
+  font-size: 11px;
+  color: #111;
+  opacity: 0.85;
+}
+
 .actions-card {
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
 }
 
@@ -112,6 +143,20 @@ header.topbar h1 {
   font-size: 13px;
   margin-bottom: 0;
   text-align: center;
+}
+
+.footer-credits {
+  margin-top: auto;
+  padding-top: 24px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.footer-credits a {
+  color: var(--accent);
+  text-decoration: none;
 }
 
 .badge {
