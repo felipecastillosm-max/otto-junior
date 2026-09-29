@@ -27,16 +27,15 @@ Se decidió terminar todo el diseño visual antes de conectar el backend real. T
 - Selector de **Contrato**
 - Selector de **Tipo de bus**, con 3 plantillas de asientos reales de la empresa:
   - **Semi Cama (46, 1 piso, 2+2)** — confirmado
-  - **Salón Cama — Volvo B450R (43, 2 pisos, 2+1)** — parcialmente confirmado, marcado "a confirmar"
-  - **Salón Cama — Irizar (42)** — **pendiente corrección**: se armó como copia del Volvo (2 pisos) pero el usuario aclaró que el Irizar es de **1 piso**. Falta confirmar si su distribución interna es 2+1 (14 filas × 3 = 42) o distinta.
+  - **Salón Cama — Volvo B450R (43, 2 pisos, 2+1)** — confirmado por el equipo
+  - **Irizar (42, 1 piso, 2+2)** — confirmado. Asiento 2 bloqueado (reservado para el asistente del bus, no se le puede asignar pasajero)
 - Mapa de asientos clickeable: asiento libre → buscador de pasajeros del contrato; asiento ocupado → ficha con datos + editar/quitar
 - Formulario de pasajero: Nombre, RUT, Teléfono de emergencia, Contrato — mismo formulario sirve para crear y editar
 - Panel "Ver relación de pasajeros": lista ordenada por número de asiento, pensada para transcribir a mano a la hoja oficial de Carabineros
 
 ## 🚧 Pendiente inmediato
 
-1. **Corregir el Irizar** a 1 piso (esperando confirmación de la distribución interna exacta)
-2. Confirmar el Volvo B450R contra el bus real (sobre todo el final de cada piso, cerca del baño/escaleras)
+Las 3 plantillas de buses quedaron confirmadas. Sin pendientes inmediatos en esta área por ahora.
 
 ## ⏳ No empezado todavía
 

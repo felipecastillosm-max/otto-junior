@@ -160,17 +160,16 @@ const BUS_TEMPLATES = {
     ]
   },
   "cama-volvo": {
-    nombre: "Salón Cama — Volvo B450R (43, a confirmar)",
+    nombre: "Salón Cama — Volvo B450R (43)",
     pisos: [
       { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
       { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
     ]
   },
   "cama-irizar": {
-    nombre: "Salón Cama — Irizar (42, a confirmar)",
+    nombre: "Irizar (42 asientos)",
     pisos: [
-      { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
-      { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
+      { id: 1, nombre: "Único piso", filas: filasCorrelativas(1, 42) }
     ],
     reservados: { 2: "Asistente" }
   }
