@@ -153,21 +153,15 @@ function filas2mas1(desde, hasta) {
 }
 
 const BUS_TEMPLATES = {
-  "semi-cama": {
-    nombre: "Semi Cama (46 asientos)",
-    pisos: [
-      { id: 1, nombre: "Único piso", filas: filasCorrelativas(1, 46) }
-    ]
-  },
-  "cama-volvo": {
-    nombre: "Salón Cama — Volvo B450R (43)",
+  "cama": {
+    nombre: "Cama — Volvo B450R (43 asientos)",
     pisos: [
       { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
       { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
     ]
   },
-  "cama-irizar": {
-    nombre: "Irizar (42 asientos)",
+  "semi-cama": {
+    nombre: "Semi Cama — Irizar (42 asientos)",
     pisos: [
       { id: 1, nombre: "Único piso", filas: filasCorrelativas(1, 42) }
     ],

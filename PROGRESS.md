@@ -25,10 +25,9 @@ Se decidió terminar todo el diseño visual antes de conectar el backend real. T
 ## ✅ Pantalla: Pasajeros (`pasajeros.html`)
 
 - Selector de **Contrato**
-- Selector de **Tipo de bus**, con 3 plantillas de asientos reales de la empresa:
-  - **Semi Cama (46, 1 piso, 2+2)** — confirmado
-  - **Salón Cama — Volvo B450R (43, 2 pisos, 2+1)** — confirmado por el equipo
-  - **Irizar (42, 1 piso, 2+2)** — confirmado. Asiento 2 bloqueado (reservado para el asistente del bus, no se le puede asignar pasajero)
+- Selector de **Tipo de bus** — la empresa tiene solo 2 modelos:
+  - **Cama — Volvo B450R (43, 2 pisos, 2+1)** — confirmado
+  - **Semi Cama — Irizar (42, 1 piso, 2+2)** — confirmado. Asiento 2 bloqueado (reservado para el asistente del bus, no se le puede asignar pasajero)
 - Mapa de asientos clickeable: asiento libre → buscador de pasajeros del contrato; asiento ocupado → ficha con datos + editar/quitar
 - Formulario de pasajero: Nombre, RUT, Teléfono de emergencia, Contrato — mismo formulario sirve para crear y editar
 - Panel "Ver relación de pasajeros": lista ordenada por número de asiento, pensada para transcribir a mano a la hoja oficial de Carabineros
