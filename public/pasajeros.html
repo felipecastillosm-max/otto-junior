@@ -18,87 +18,193 @@
     <span class="badge online" id="net-badge">En línea</span>
   </header>
 
-  <input class="search" placeholder="Buscar nombre..." id="search">
-
-  <div class="card" id="lista">
-    <div style="color:var(--text-dim); text-align:center; padding:10px;">Cargando...</div>
+  <div class="card">
+    <div class="section-title">Contrato</div>
+    <select class="search" id="contrato-select"></select>
   </div>
+
+  <div class="floor-tabs">
+    <button class="floor-tab active" data-piso="1">Piso 1</button>
+    <button class="floor-tab" data-piso="2">Piso 2</button>
+  </div>
+
+  <div class="card seat-map-card">
+    <div class="seat-legend">
+      <span><i class="dot-free"></i> Libre</span>
+      <span><i class="dot-taken"></i> Ocupado</span>
+    </div>
+    <div class="seat-grid" id="seat-grid"></div>
+  </div>
+
+  <a class="btn secondary" href="#" id="add-btn">+ Agregar pasajero nuevo</a>
 
   <div class="card" id="form-nuevo" style="display:none;">
     <div class="section-title">Nuevo pasajero</div>
     <input class="search" placeholder="Nombre" id="nuevo-nombre" style="margin-bottom:8px;">
-    <input class="search" placeholder="Asiento (ej: A14)" id="nuevo-asiento" style="margin-bottom:8px;">
     <input class="search" placeholder="Baja en (paradero)" id="nuevo-paradero" style="margin-bottom:8px;">
-    <button class="btn" id="guardar-btn">Guardar</button>
+    <button class="btn" id="guardar-btn">Guardar en la lista del contrato</button>
   </div>
-
-  <a class="btn secondary" href="#" id="add-btn">+ Agregar pasajero nuevo</a>
 </div>
+
+<div class="seat-sheet" id="seat-sheet">
+  <div class="seat-sheet-panel">
+    <div class="seat-sheet-header">
+      <div>
+        <div class="seat-sheet-title">Asignar asiento <span id="sheet-seat-code"></span></div>
+        <div class="seat-sheet-sub" id="sheet-contract-name"></div>
+      </div>
+      <button class="seat-sheet-close" id="sheet-close">✕</button>
+    </div>
+    <input class="search" placeholder="Buscar nombre..." id="sheet-search" autocomplete="off">
+    <div class="seat-sheet-list" id="sheet-list"></div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 <script>
-let pasajeros = [];
-
-function renderLista(items) {
-  const lista = document.getElementById("lista");
-
-  if (items.length === 0) {
-    lista.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:10px;">Sin pasajeros todavía</div>';
-    return;
+const CONTRATOS = [
+  {
+    id: "minera-qb",
+    nombre: "Minera Quebrada Blanca — Turno Noche",
+    pasajeros: [
+      "Juan Pérez", "María González", "Pedro Soto", "Rosa Díaz",
+      "Carlos Muñoz", "Fernanda Vidal", "Luis Araya", "Camila Rojas",
+      "Diego Fuentes", "Valentina Reyes"
+    ]
+  },
+  {
+    id: "puerto-iqq",
+    nombre: "Puerto Iquique — Turno Día",
+    pasajeros: [
+      "Andrés Silva", "Paula Contreras", "Ignacio Castro", "Javiera Morales"
+    ]
   }
+];
 
-  lista.innerHTML = items.map(function (p) {
+const PISO1_ROWS = 10;
+const PISO2_ROWS = 4;
+
+let contratoActual = CONTRATOS[0];
+let pisoActual = "1";
+const asientos = {};
+let asientoSeleccionado = null;
+
+function seatIds(piso) {
+  const rows = piso === "1" ? PISO1_ROWS : PISO2_ROWS;
+  const cols = ["A", "B", "C", "D"];
+  const ids = [];
+  for (let r = 1; r <= rows; r++) {
+    cols.forEach(c => ids.push(`P${piso}-${r}${c}`));
+  }
+  return ids;
+}
+
+function initContratoSelect() {
+  const select = document.getElementById("contrato-select");
+  select.innerHTML = CONTRATOS.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+  select.addEventListener("change", () => {
+    contratoActual = CONTRATOS.find(c => c.id === select.value);
+    renderSeatGrid();
+  });
+}
+
+function initFloorTabs() {
+  document.querySelectorAll(".floor-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".floor-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      pisoActual = tab.dataset.piso;
+      renderSeatGrid();
+    });
+  });
+}
+
+function renderSeatGrid() {
+  const grid = document.getElementById("seat-grid");
+  const ids = seatIds(pisoActual);
+  grid.innerHTML = ids.map(id => {
+    const rowNum = parseInt(id.split("-")[1]);
+    const col = id.slice(-1);
+    const asignado = asientos[id];
+    const gapBefore = col === "C" ? "seat-gap" : "";
+    const label = id.split("-")[1];
     return `
-      <div class="passenger-row">
-        <div>
-          <div class="name">${p.nombre}</div>
-          <div class="dest">${p.estado === "bajado" ? "Ya bajó" : "Baja en: " + (p.paradero || "sin definir")}</div>
-        </div>
-        <div class="seat-tag" style="${p.estado === 'bajado' ? 'background:#3a3f4a;' : ''}">${p.asiento || "-"}</div>
-      </div>
+      <button class="seat ${asignado ? "taken" : "free"} ${gapBefore}" data-seat="${id}" data-label="${label}">
+        <span class="seat-num">${label}</span>
+        ${asignado ? `<span class="seat-name">${initials(asignado)}</span>` : ""}
+      </button>
     `;
   }).join("");
+
+  grid.querySelectorAll(".seat").forEach(btn => {
+    btn.addEventListener("click", () => openSeatSheet(btn.dataset.seat, btn.dataset.label));
+  });
 }
 
-async function cargarPasajeros() {
-  try {
-    pasajeros = await apiGet("listPasajeros");
-    renderLista(pasajeros);
-  } catch (err) {
-    document.getElementById("lista").innerHTML =
-      '<div style="color:var(--danger); text-align:center; padding:10px;">No se pudo conectar al backend (¿está corriendo wrangler dev?)</div>';
+function initials(nombre) {
+  return nombre.split(" ").map(p => p[0]).join("").slice(0, 2).toUpperCase();
+}
+
+function openSeatSheet(seatId, label) {
+  asientoSeleccionado = seatId;
+  document.getElementById("sheet-seat-code").textContent = label;
+  document.getElementById("sheet-contract-name").textContent = contratoActual.nombre;
+  document.getElementById("sheet-search").value = "";
+  renderSheetList(contratoActual.pasajeros);
+  document.getElementById("seat-sheet").classList.add("open");
+  document.getElementById("sheet-search").focus();
+}
+
+function renderSheetList(nombres) {
+  const list = document.getElementById("sheet-list");
+  if (nombres.length === 0) {
+    list.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:16px;">Sin resultados</div>';
+    return;
   }
+  list.innerHTML = nombres.map(n => `
+    <button class="sheet-item" data-name="${n}">${n}</button>
+  `).join("");
+  list.querySelectorAll(".sheet-item").forEach(item => {
+    item.addEventListener("click", () => {
+      asientos[asientoSeleccionado] = item.dataset.name;
+      closeSeatSheet();
+      renderSeatGrid();
+    });
+  });
 }
 
-document.getElementById("search").addEventListener("input", function (e) {
-  const q = e.target.value.toLowerCase();
-  renderLista(pasajeros.filter(function (p) {
-    return p.nombre.toLowerCase().includes(q);
-  }));
+function closeSeatSheet() {
+  document.getElementById("seat-sheet").classList.remove("open");
+  asientoSeleccionado = null;
+}
+
+document.getElementById("sheet-close").addEventListener("click", closeSeatSheet);
+document.getElementById("seat-sheet").addEventListener("click", (e) => {
+  if (e.target.id === "seat-sheet") closeSeatSheet();
 });
 
-document.getElementById("add-btn").addEventListener("click", function (e) {
+document.getElementById("sheet-search").addEventListener("input", (e) => {
+  const q = e.target.value.toLowerCase();
+  renderSheetList(contratoActual.pasajeros.filter(n => n.toLowerCase().includes(q)));
+});
+
+document.getElementById("add-btn").addEventListener("click", (e) => {
   e.preventDefault();
   document.getElementById("form-nuevo").style.display = "block";
 });
 
-document.getElementById("guardar-btn").addEventListener("click", async function () {
+document.getElementById("guardar-btn").addEventListener("click", () => {
   const nombre = document.getElementById("nuevo-nombre").value.trim();
-  const asiento = document.getElementById("nuevo-asiento").value.trim();
-  const paradero = document.getElementById("nuevo-paradero").value.trim();
-
   if (!nombre) return;
-
-  await apiPost("addPasajero", { nombre, asiento, paradero });
-
+  contratoActual.pasajeros.push(nombre);
   document.getElementById("nuevo-nombre").value = "";
-  document.getElementById("nuevo-asiento").value = "";
   document.getElementById("nuevo-paradero").value = "";
   document.getElementById("form-nuevo").style.display = "none";
-
-  cargarPasajeros();
 });
 
-cargarPasajeros();
+initContratoSelect();
+initFloorTabs();
+renderSeatGrid();
 </script>
 </body>
 </html>
