@@ -471,17 +471,6 @@ textarea.template {
   background: transparent;
 }
 
-.seat.reserved {
-  background: repeating-linear-gradient(45deg, #262a33, #262a33 6px, #1a1d24 6px, #1a1d24 12px);
-  color: var(--text-dim);
-  cursor: not-allowed;
-}
-
-.seat.reserved .seat-name {
-  font-size: 9px;
-  font-weight: 700;
-}
-
 .seat-num {
   font-size: 10px;
   opacity: 0.8;
@@ -491,6 +480,10 @@ textarea.template {
   font-size: 11px;
   font-weight: 800;
   margin-top: 2px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .seat-sheet {

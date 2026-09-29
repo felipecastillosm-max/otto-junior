@@ -239,7 +239,7 @@ function renderSeatGrid() {
       }
       if (reservados[num]) {
         return `
-          <div class="seat reserved ${gapBefore}">
+          <div class="seat taken reserved ${gapBefore}">
             <span class="seat-num">${num}</span>
             <span class="seat-name">${reservados[num]}</span>
           </div>
