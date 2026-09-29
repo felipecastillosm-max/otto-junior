@@ -165,9 +165,15 @@ const BUS_TEMPLATES = {
       { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
       { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
     ]
+  },
+  "cama-irizar": {
+    nombre: "Salón Cama — Irizar (42, a confirmar)",
+    pisos: [
+      { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
+      { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
+    ],
+    reservados: { 2: "Asistente" }
   }
-  // "cama-irizar" (42 asientos) queda pendiente: un asiento menos que el Volvo,
-  // pero no sé todavía en qué posición exacta falta ese asiento.
 };
 
 let contratoActual = CONTRATOS[0];
@@ -230,11 +236,21 @@ function renderSeatGrid() {
   const piso = busActual.pisos.find(p => p.id === pisoActual);
   const grid = document.getElementById("seat-grid");
 
+  const reservados = busActual.reservados || {};
+
   grid.innerHTML = piso.filas.map(fila => {
     return fila.map((num, i) => {
       const gapBefore = i === 2 ? "seat-gap" : "";
       if (num === null) {
         return `<div class="seat seat-empty ${gapBefore}"></div>`;
+      }
+      if (reservados[num]) {
+        return `
+          <div class="seat reserved ${gapBefore}">
+            <span class="seat-num">${num}</span>
+            <span class="seat-name">${reservados[num]}</span>
+          </div>
+        `;
       }
       const pasajeroId = asientos[num];
       const pasajero = pasajeroId ? PASAJEROS.find(p => p.id === pasajeroId) : null;
@@ -247,7 +263,7 @@ function renderSeatGrid() {
     }).join("");
   }).join("");
 
-  grid.querySelectorAll(".seat:not(.seat-empty)").forEach(btn => {
+  grid.querySelectorAll(".seat:not(.seat-empty):not(.reserved)").forEach(btn => {
     btn.addEventListener("click", () => {
       const num = btn.dataset.seat;
       if (asientos[num]) {
