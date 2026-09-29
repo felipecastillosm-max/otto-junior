@@ -38,13 +38,6 @@
 
   <a class="btn secondary" href="#" id="add-btn">+ Agregar pasajero nuevo</a>
   <a class="btn secondary" href="#" id="ver-relacion-btn">Ver relación de pasajeros</a>
-
-  <div class="card" id="form-nuevo" style="display:none;">
-    <div class="section-title">Nuevo pasajero</div>
-    <input class="search" placeholder="Nombre" id="nuevo-nombre" style="margin-bottom:8px;">
-    <input class="search" placeholder="Baja en (paradero)" id="nuevo-paradero" style="margin-bottom:8px;">
-    <button class="btn" id="guardar-btn">Guardar en la lista del contrato</button>
-  </div>
 </div>
 
 <div class="seat-sheet" id="seat-sheet">
@@ -61,6 +54,41 @@
   </div>
 </div>
 
+<div class="seat-sheet" id="detail-sheet">
+  <div class="seat-sheet-panel">
+    <div class="seat-sheet-header">
+      <div>
+        <div class="seat-sheet-title">Asiento <span id="detail-seat-code"></span></div>
+      </div>
+      <button class="seat-sheet-close" id="detail-close">✕</button>
+    </div>
+    <div class="pasajero-detail">
+      <div class="pasajero-detail-nombre" id="detail-nombre"></div>
+      <div class="pasajero-detail-row"><span>RUT</span><strong id="detail-rut"></strong></div>
+      <div class="pasajero-detail-row"><span>Teléfono de emergencia</span><strong id="detail-telefono"></strong></div>
+      <div class="pasajero-detail-row"><span>Contrato</span><strong id="detail-contrato"></strong></div>
+    </div>
+    <button class="btn" id="detail-editar">Editar datos</button>
+    <button class="btn secondary" id="detail-quitar">Quitar de este asiento</button>
+  </div>
+</div>
+
+<div class="seat-sheet" id="form-sheet">
+  <div class="seat-sheet-panel">
+    <div class="seat-sheet-header">
+      <div>
+        <div class="seat-sheet-title" id="form-title">Nuevo pasajero</div>
+      </div>
+      <button class="seat-sheet-close" id="form-close">✕</button>
+    </div>
+    <input class="search" placeholder="Nombre completo" id="f-nombre" style="margin-bottom:8px;">
+    <input class="search" placeholder="RUT" id="f-rut" style="margin-bottom:8px;">
+    <input class="search" placeholder="Teléfono de emergencia" id="f-telefono" style="margin-bottom:8px;">
+    <select class="search" id="f-contrato" style="margin-bottom:14px;"></select>
+    <button class="btn" id="form-guardar">Guardar</button>
+  </div>
+</div>
+
 <div class="seat-sheet" id="relacion-sheet">
   <div class="seat-sheet-panel relacion-panel">
     <div class="seat-sheet-header">
@@ -70,7 +98,7 @@
       </div>
       <button class="seat-sheet-close" id="relacion-close">✕</button>
     </div>
-    <div class="relacion-note">Transcribe esta lista a la hoja oficial de Carabineros al llegar al retén.</div>
+    <div class="relacion-note">Transcribe esta lista a la hoja oficial de Carabineros al llegar al retén. Toca un nombre para corregir sus datos.</div>
     <div class="seat-sheet-list" id="relacion-list"></div>
   </div>
 </div>
@@ -78,22 +106,21 @@
 <script src="app.js"></script>
 <script>
 const CONTRATOS = [
-  {
-    id: "minera-qb",
-    nombre: "Minera Quebrada Blanca — Turno Noche",
-    pasajeros: [
-      "Juan Pérez", "María González", "Pedro Soto", "Rosa Díaz",
-      "Carlos Muñoz", "Fernanda Vidal", "Luis Araya", "Camila Rojas",
-      "Diego Fuentes", "Valentina Reyes"
-    ]
-  },
-  {
-    id: "puerto-iqq",
-    nombre: "Puerto Iquique — Turno Día",
-    pasajeros: [
-      "Andrés Silva", "Paula Contreras", "Ignacio Castro", "Javiera Morales"
-    ]
-  }
+  { id: "minera-qb", nombre: "Minera Quebrada Blanca — Turno Noche" },
+  { id: "puerto-iqq", nombre: "Puerto Iquique — Turno Día" }
+];
+
+let PASAJEROS = [
+  { id: "p1", nombre: "Juan Pérez", rut: "12.345.678-9", telefono: "+56 9 1234 5678", contratoId: "minera-qb" },
+  { id: "p2", nombre: "María González", rut: "13.222.111-4", telefono: "+56 9 8765 4321", contratoId: "minera-qb" },
+  { id: "p3", nombre: "Pedro Soto", rut: "9.876.543-2", telefono: "+56 9 1111 2222", contratoId: "minera-qb" },
+  { id: "p4", nombre: "Rosa Díaz", rut: "14.555.666-7", telefono: "+56 9 3333 4444", contratoId: "minera-qb" },
+  { id: "p5", nombre: "Carlos Muñoz", rut: "10.111.222-3", telefono: "+56 9 5555 6666", contratoId: "minera-qb" },
+  { id: "p6", nombre: "Fernanda Vidal", rut: "16.777.888-9", telefono: "+56 9 7777 8888", contratoId: "minera-qb" },
+  { id: "p7", nombre: "Andrés Silva", rut: "11.444.333-2", telefono: "+56 9 2222 3333", contratoId: "puerto-iqq" },
+  { id: "p8", nombre: "Paula Contreras", rut: "15.999.000-1", telefono: "+56 9 4444 5555", contratoId: "puerto-iqq" },
+  { id: "p9", nombre: "Ignacio Castro", rut: "12.888.777-6", telefono: "+56 9 6666 7777", contratoId: "puerto-iqq" },
+  { id: "p10", nombre: "Javiera Morales", rut: "17.222.333-4", telefono: "+56 9 9999 0000", contratoId: "puerto-iqq" }
 ];
 
 const PISO1_ROWS = 10;
@@ -101,8 +128,14 @@ const PISO2_ROWS = 4;
 
 let contratoActual = CONTRATOS[0];
 let pisoActual = "1";
-const asientos = {};
+const asientos = {}; // seatId -> pasajeroId
 let asientoSeleccionado = null;
+let pasajeroEditandoId = null;
+
+function nombreContrato(id) {
+  const c = CONTRATOS.find(c => c.id === id);
+  return c ? c.nombre : "—";
+}
 
 function seatIds(piso) {
   const rows = piso === "1" ? PISO1_ROWS : PISO2_ROWS;
@@ -114,13 +147,16 @@ function seatIds(piso) {
   return ids;
 }
 
-function initContratoSelect() {
+function initContratoSelects() {
+  const options = CONTRATOS.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
   const select = document.getElementById("contrato-select");
-  select.innerHTML = CONTRATOS.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+  select.innerHTML = options;
   select.addEventListener("change", () => {
     contratoActual = CONTRATOS.find(c => c.id === select.value);
     renderSeatGrid();
   });
+
+  document.getElementById("f-contrato").innerHTML = options;
 }
 
 function initFloorTabs() {
@@ -134,30 +170,37 @@ function initFloorTabs() {
   });
 }
 
+function initials(nombre) {
+  return nombre.split(" ").map(p => p[0]).join("").slice(0, 2).toUpperCase();
+}
+
 function renderSeatGrid() {
   const grid = document.getElementById("seat-grid");
   const ids = seatIds(pisoActual);
   grid.innerHTML = ids.map(id => {
-    const rowNum = parseInt(id.split("-")[1]);
-    const col = id.slice(-1);
-    const asignado = asientos[id];
-    const gapBefore = col === "C" ? "seat-gap" : "";
+    const pasajeroId = asientos[id];
+    const pasajero = pasajeroId ? PASAJEROS.find(p => p.id === pasajeroId) : null;
     const label = id.split("-")[1];
+    const col = label.slice(-1);
+    const gapBefore = col === "C" ? "seat-gap" : "";
     return `
-      <button class="seat ${asignado ? "taken" : "free"} ${gapBefore}" data-seat="${id}" data-label="${label}">
+      <button class="seat ${pasajero ? "taken" : "free"} ${gapBefore}" data-seat="${id}" data-label="${label}">
         <span class="seat-num">${label}</span>
-        ${asignado ? `<span class="seat-name">${initials(asignado)}</span>` : ""}
+        ${pasajero ? `<span class="seat-name">${initials(pasajero.nombre)}</span>` : ""}
       </button>
     `;
   }).join("");
 
   grid.querySelectorAll(".seat").forEach(btn => {
-    btn.addEventListener("click", () => openSeatSheet(btn.dataset.seat, btn.dataset.label));
+    btn.addEventListener("click", () => {
+      const seatId = btn.dataset.seat;
+      if (asientos[seatId]) {
+        openDetailSheet(seatId, btn.dataset.label);
+      } else {
+        openSeatSheet(seatId, btn.dataset.label);
+      }
+    });
   });
-}
-
-function initials(nombre) {
-  return nombre.split(" ").map(p => p[0]).join("").slice(0, 2).toUpperCase();
 }
 
 function openSeatSheet(seatId, label) {
@@ -165,56 +208,104 @@ function openSeatSheet(seatId, label) {
   document.getElementById("sheet-seat-code").textContent = label;
   document.getElementById("sheet-contract-name").textContent = contratoActual.nombre;
   document.getElementById("sheet-search").value = "";
-  renderSheetList(contratoActual.pasajeros);
+  renderSheetList(PASAJEROS.filter(p => p.contratoId === contratoActual.id));
   document.getElementById("seat-sheet").classList.add("open");
   document.getElementById("sheet-search").focus();
 }
 
-function renderSheetList(nombres) {
+function renderSheetList(pasajeros) {
   const list = document.getElementById("sheet-list");
-  if (nombres.length === 0) {
+  if (pasajeros.length === 0) {
     list.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:16px;">Sin resultados</div>';
     return;
   }
-  list.innerHTML = nombres.map(n => `
-    <button class="sheet-item" data-name="${n}">${n}</button>
+  list.innerHTML = pasajeros.map(p => `
+    <button class="sheet-item" data-id="${p.id}">${p.nombre}</button>
   `).join("");
   list.querySelectorAll(".sheet-item").forEach(item => {
     item.addEventListener("click", () => {
-      asientos[asientoSeleccionado] = item.dataset.name;
-      closeSeatSheet();
+      asientos[asientoSeleccionado] = item.dataset.id;
+      closeSheet("seat-sheet");
       renderSeatGrid();
     });
   });
 }
 
-function closeSeatSheet() {
-  document.getElementById("seat-sheet").classList.remove("open");
-  asientoSeleccionado = null;
-}
-
-document.getElementById("sheet-close").addEventListener("click", closeSeatSheet);
-document.getElementById("seat-sheet").addEventListener("click", (e) => {
-  if (e.target.id === "seat-sheet") closeSeatSheet();
-});
-
 document.getElementById("sheet-search").addEventListener("input", (e) => {
   const q = e.target.value.toLowerCase();
-  renderSheetList(contratoActual.pasajeros.filter(n => n.toLowerCase().includes(q)));
+  renderSheetList(PASAJEROS.filter(p => p.contratoId === contratoActual.id && p.nombre.toLowerCase().includes(q)));
 });
+
+function openDetailSheet(seatId, label) {
+  asientoSeleccionado = seatId;
+  const pasajero = PASAJEROS.find(p => p.id === asientos[seatId]);
+  document.getElementById("detail-seat-code").textContent = label;
+  document.getElementById("detail-nombre").textContent = pasajero.nombre;
+  document.getElementById("detail-rut").textContent = pasajero.rut || "—";
+  document.getElementById("detail-telefono").textContent = pasajero.telefono || "—";
+  document.getElementById("detail-contrato").textContent = nombreContrato(pasajero.contratoId);
+  document.getElementById("detail-sheet").classList.add("open");
+}
+
+document.getElementById("detail-editar").addEventListener("click", () => {
+  const pasajero = PASAJEROS.find(p => p.id === asientos[asientoSeleccionado]);
+  closeSheet("detail-sheet");
+  openPasajeroForm(pasajero);
+});
+
+document.getElementById("detail-quitar").addEventListener("click", () => {
+  delete asientos[asientoSeleccionado];
+  closeSheet("detail-sheet");
+  renderSeatGrid();
+});
+
+function openPasajeroForm(pasajero) {
+  pasajeroEditandoId = pasajero ? pasajero.id : null;
+  document.getElementById("form-title").textContent = pasajero ? "Editar pasajero" : "Nuevo pasajero";
+  document.getElementById("f-nombre").value = pasajero ? pasajero.nombre : "";
+  document.getElementById("f-rut").value = pasajero ? pasajero.rut : "";
+  document.getElementById("f-telefono").value = pasajero ? pasajero.telefono : "";
+  document.getElementById("f-contrato").value = pasajero ? pasajero.contratoId : contratoActual.id;
+  document.getElementById("form-sheet").classList.add("open");
+}
 
 document.getElementById("add-btn").addEventListener("click", (e) => {
   e.preventDefault();
-  document.getElementById("form-nuevo").style.display = "block";
+  openPasajeroForm(null);
 });
 
-document.getElementById("guardar-btn").addEventListener("click", () => {
-  const nombre = document.getElementById("nuevo-nombre").value.trim();
+document.getElementById("form-guardar").addEventListener("click", () => {
+  const nombre = document.getElementById("f-nombre").value.trim();
   if (!nombre) return;
-  contratoActual.pasajeros.push(nombre);
-  document.getElementById("nuevo-nombre").value = "";
-  document.getElementById("nuevo-paradero").value = "";
-  document.getElementById("form-nuevo").style.display = "none";
+  const rut = document.getElementById("f-rut").value.trim();
+  const telefono = document.getElementById("f-telefono").value.trim();
+  const contratoId = document.getElementById("f-contrato").value;
+
+  if (pasajeroEditandoId) {
+    const p = PASAJEROS.find(p => p.id === pasajeroEditandoId);
+    Object.assign(p, { nombre, rut, telefono, contratoId });
+  } else {
+    PASAJEROS.push({ id: "p" + Date.now(), nombre, rut, telefono, contratoId });
+  }
+
+  closeSheet("form-sheet");
+  renderSeatGrid();
+});
+
+function closeSheet(id) {
+  document.getElementById(id).classList.remove("open");
+}
+
+["sheet-close", "detail-close", "form-close", "relacion-close"].forEach(btnId => {
+  document.getElementById(btnId).addEventListener("click", () => {
+    closeSheet(btnId.replace("-close", "-sheet"));
+  });
+});
+
+document.querySelectorAll(".seat-sheet").forEach(sheet => {
+  sheet.addEventListener("click", (e) => {
+    if (e.target === sheet) sheet.classList.remove("open");
+  });
 });
 
 function parseSeatId(seatId) {
@@ -227,7 +318,7 @@ function parseSeatId(seatId) {
 
 function renderRelacionList() {
   const entries = Object.keys(asientos)
-    .map(id => ({ id, nombre: asientos[id], ...parseSeatId(id) }))
+    .map(seatId => ({ seatId, pasajero: PASAJEROS.find(p => p.id === asientos[seatId]), ...parseSeatId(seatId) }))
     .sort((a, b) => a.piso - b.piso || a.row - b.row || a.col.localeCompare(b.col));
 
   document.getElementById("relacion-count").textContent =
@@ -240,11 +331,19 @@ function renderRelacionList() {
   }
 
   list.innerHTML = entries.map(e => `
-    <div class="relacion-row">
+    <button class="relacion-row" data-id="${e.pasajero.id}">
       <span class="relacion-seat">${e.row}${e.col} · Piso ${e.piso}</span>
-      <span class="relacion-nombre">${e.nombre}</span>
-    </div>
+      <span class="relacion-nombre">${e.pasajero.nombre}</span>
+    </button>
   `).join("");
+
+  list.querySelectorAll(".relacion-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const pasajero = PASAJEROS.find(p => p.id === row.dataset.id);
+      closeSheet("relacion-sheet");
+      openPasajeroForm(pasajero);
+    });
+  });
 }
 
 document.getElementById("ver-relacion-btn").addEventListener("click", (e) => {
@@ -253,17 +352,7 @@ document.getElementById("ver-relacion-btn").addEventListener("click", (e) => {
   document.getElementById("relacion-sheet").classList.add("open");
 });
 
-document.getElementById("relacion-close").addEventListener("click", () => {
-  document.getElementById("relacion-sheet").classList.remove("open");
-});
-
-document.getElementById("relacion-sheet").addEventListener("click", (e) => {
-  if (e.target.id === "relacion-sheet") {
-    document.getElementById("relacion-sheet").classList.remove("open");
-  }
-});
-
-initContratoSelect();
+initContratoSelects();
 initFloorTabs();
 renderSeatGrid();
 </script>

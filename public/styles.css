@@ -584,6 +584,41 @@ textarea.template {
   padding: 12px 14px;
   background: #12161c;
   border-radius: 10px;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.relacion-row:hover {
+  background: var(--accent-dark);
+}
+
+.pasajero-detail {
+  background: #12161c;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 8px 0 16px;
+}
+
+.pasajero-detail-nombre {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.pasajero-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  border-top: 1px solid #262a33;
+  color: var(--text-dim);
+}
+
+.pasajero-detail-row strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .relacion-seat {
