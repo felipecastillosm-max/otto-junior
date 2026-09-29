@@ -136,15 +136,38 @@ function filasCorrelativas(desde, hasta, ultimaFilaParcial) {
   return filas;
 }
 
+// 2+1 por fila: doble a la izquierda (ventana, pasillo), simple a la derecha (ventana).
+// La última fila de cada piso puede quedar con menos de 3 asientos si no alcanza justo.
+function filas2mas1(desde, hasta) {
+  const filas = [];
+  let n = desde;
+  while (n <= hasta) {
+    const fila = [n];
+    n++;
+    fila.push(n <= hasta ? n++ : null);
+    fila.push(n <= hasta ? n++ : null);
+    fila.push(null);
+    filas.push(fila);
+  }
+  return filas;
+}
+
 const BUS_TEMPLATES = {
   "semi-cama": {
     nombre: "Semi Cama (46 asientos)",
     pisos: [
       { id: 1, nombre: "Único piso", filas: filasCorrelativas(1, 46) }
     ]
+  },
+  "cama-volvo": {
+    nombre: "Salón Cama — Volvo B450R (43, a confirmar)",
+    pisos: [
+      { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
+      { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
+    ]
   }
-  // "cama-volvo" y "cama-irizar" (Salón Cama, 2 pisos) quedan pendientes
-  // hasta confirmar la numeración exacta con la planilla de la empresa.
+  // "cama-irizar" (42 asientos) queda pendiente: un asiento menos que el Volvo,
+  // pero no sé todavía en qué posición exacta falta ese asiento.
 };
 
 let contratoActual = CONTRATOS[0];
