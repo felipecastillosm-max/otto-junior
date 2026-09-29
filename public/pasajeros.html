@@ -20,13 +20,12 @@
 
   <div class="card">
     <div class="section-title">Contrato</div>
-    <select class="search" id="contrato-select"></select>
+    <select class="search" id="contrato-select" style="margin-bottom:12px;"></select>
+    <div class="section-title">Tipo de bus</div>
+    <select class="search" id="bus-select"></select>
   </div>
 
-  <div class="floor-tabs">
-    <button class="floor-tab active" data-piso="1">Piso 1</button>
-    <button class="floor-tab" data-piso="2">Piso 2</button>
-  </div>
+  <div class="floor-tabs" id="floor-tabs" style="display:none;"></div>
 
   <div class="card seat-map-card">
     <div class="seat-legend">
@@ -123,12 +122,35 @@ let PASAJEROS = [
   { id: "p10", nombre: "Javiera Morales", rut: "17.222.333-4", telefono: "+56 9 9999 0000", contratoId: "puerto-iqq" }
 ];
 
-const PISO1_ROWS = 10;
-const PISO2_ROWS = 4;
+// Plantillas de buses reales de la empresa.
+// Cada fila trae hasta 4 posiciones; null = espacio sin asiento (baño, cafetería, escalera, etc.)
+function filasCorrelativas(desde, hasta, ultimaFilaParcial) {
+  const filas = [];
+  let n = desde;
+  while (n <= hasta) {
+    const fila = [];
+    for (let i = 0; i < 4 && n <= hasta; i++, n++) fila.push(n);
+    while (fila.length < 4) fila.push(null);
+    filas.push(fila);
+  }
+  return filas;
+}
+
+const BUS_TEMPLATES = {
+  "semi-cama": {
+    nombre: "Semi Cama (46 asientos)",
+    pisos: [
+      { id: 1, nombre: "Único piso", filas: filasCorrelativas(1, 46) }
+    ]
+  }
+  // "cama-volvo" y "cama-irizar" (Salón Cama, 2 pisos) quedan pendientes
+  // hasta confirmar la numeración exacta con la planilla de la empresa.
+};
 
 let contratoActual = CONTRATOS[0];
-let pisoActual = "1";
-const asientos = {}; // seatId -> pasajeroId
+let busActual = BUS_TEMPLATES["semi-cama"];
+let pisoActual = busActual.pisos[0].id;
+const asientos = {}; // seatNumber -> pasajeroId
 let asientoSeleccionado = null;
 let pasajeroEditandoId = null;
 
@@ -137,34 +159,41 @@ function nombreContrato(id) {
   return c ? c.nombre : "—";
 }
 
-function seatIds(piso) {
-  const rows = piso === "1" ? PISO1_ROWS : PISO2_ROWS;
-  const cols = ["A", "B", "C", "D"];
-  const ids = [];
-  for (let r = 1; r <= rows; r++) {
-    cols.forEach(c => ids.push(`P${piso}-${r}${c}`));
-  }
-  return ids;
-}
+function initSelects() {
+  const contratoOptions = CONTRATOS.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
+  const contratoSelect = document.getElementById("contrato-select");
+  contratoSelect.innerHTML = contratoOptions;
+  contratoSelect.addEventListener("change", () => {
+    contratoActual = CONTRATOS.find(c => c.id === contratoSelect.value);
+  });
+  document.getElementById("f-contrato").innerHTML = contratoOptions;
 
-function initContratoSelects() {
-  const options = CONTRATOS.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("");
-  const select = document.getElementById("contrato-select");
-  select.innerHTML = options;
-  select.addEventListener("change", () => {
-    contratoActual = CONTRATOS.find(c => c.id === select.value);
+  const busSelect = document.getElementById("bus-select");
+  busSelect.innerHTML = Object.keys(BUS_TEMPLATES)
+    .map(key => `<option value="${key}">${BUS_TEMPLATES[key].nombre}</option>`).join("");
+  busSelect.addEventListener("change", () => {
+    busActual = BUS_TEMPLATES[busSelect.value];
+    pisoActual = busActual.pisos[0].id;
+    renderFloorTabs();
     renderSeatGrid();
   });
-
-  document.getElementById("f-contrato").innerHTML = options;
 }
 
-function initFloorTabs() {
-  document.querySelectorAll(".floor-tab").forEach(tab => {
+function renderFloorTabs() {
+  const wrap = document.getElementById("floor-tabs");
+  if (busActual.pisos.length <= 1) {
+    wrap.style.display = "none";
+    wrap.innerHTML = "";
+    return;
+  }
+  wrap.style.display = "flex";
+  wrap.innerHTML = busActual.pisos.map(p => `
+    <button class="floor-tab ${p.id === pisoActual ? "active" : ""}" data-piso="${p.id}">${p.nombre}</button>
+  `).join("");
+  wrap.querySelectorAll(".floor-tab").forEach(tab => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".floor-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      pisoActual = tab.dataset.piso;
+      pisoActual = parseInt(tab.dataset.piso);
+      renderFloorTabs();
       renderSeatGrid();
     });
   });
@@ -175,37 +204,41 @@ function initials(nombre) {
 }
 
 function renderSeatGrid() {
+  const piso = busActual.pisos.find(p => p.id === pisoActual);
   const grid = document.getElementById("seat-grid");
-  const ids = seatIds(pisoActual);
-  grid.innerHTML = ids.map(id => {
-    const pasajeroId = asientos[id];
-    const pasajero = pasajeroId ? PASAJEROS.find(p => p.id === pasajeroId) : null;
-    const label = id.split("-")[1];
-    const col = label.slice(-1);
-    const gapBefore = col === "C" ? "seat-gap" : "";
-    return `
-      <button class="seat ${pasajero ? "taken" : "free"} ${gapBefore}" data-seat="${id}" data-label="${label}">
-        <span class="seat-num">${label}</span>
-        ${pasajero ? `<span class="seat-name">${initials(pasajero.nombre)}</span>` : ""}
-      </button>
-    `;
+
+  grid.innerHTML = piso.filas.map(fila => {
+    return fila.map((num, i) => {
+      const gapBefore = i === 2 ? "seat-gap" : "";
+      if (num === null) {
+        return `<div class="seat seat-empty ${gapBefore}"></div>`;
+      }
+      const pasajeroId = asientos[num];
+      const pasajero = pasajeroId ? PASAJEROS.find(p => p.id === pasajeroId) : null;
+      return `
+        <button class="seat ${pasajero ? "taken" : "free"} ${gapBefore}" data-seat="${num}">
+          <span class="seat-num">${num}</span>
+          ${pasajero ? `<span class="seat-name">${initials(pasajero.nombre)}</span>` : ""}
+        </button>
+      `;
+    }).join("");
   }).join("");
 
-  grid.querySelectorAll(".seat").forEach(btn => {
+  grid.querySelectorAll(".seat:not(.seat-empty)").forEach(btn => {
     btn.addEventListener("click", () => {
-      const seatId = btn.dataset.seat;
-      if (asientos[seatId]) {
-        openDetailSheet(seatId, btn.dataset.label);
+      const num = btn.dataset.seat;
+      if (asientos[num]) {
+        openDetailSheet(num);
       } else {
-        openSeatSheet(seatId, btn.dataset.label);
+        openSeatSheet(num);
       }
     });
   });
 }
 
-function openSeatSheet(seatId, label) {
-  asientoSeleccionado = seatId;
-  document.getElementById("sheet-seat-code").textContent = label;
+function openSeatSheet(num) {
+  asientoSeleccionado = num;
+  document.getElementById("sheet-seat-code").textContent = num;
   document.getElementById("sheet-contract-name").textContent = contratoActual.nombre;
   document.getElementById("sheet-search").value = "";
   renderSheetList(PASAJEROS.filter(p => p.contratoId === contratoActual.id));
@@ -236,10 +269,10 @@ document.getElementById("sheet-search").addEventListener("input", (e) => {
   renderSheetList(PASAJEROS.filter(p => p.contratoId === contratoActual.id && p.nombre.toLowerCase().includes(q)));
 });
 
-function openDetailSheet(seatId, label) {
-  asientoSeleccionado = seatId;
-  const pasajero = PASAJEROS.find(p => p.id === asientos[seatId]);
-  document.getElementById("detail-seat-code").textContent = label;
+function openDetailSheet(num) {
+  asientoSeleccionado = num;
+  const pasajero = PASAJEROS.find(p => p.id === asientos[num]);
+  document.getElementById("detail-seat-code").textContent = num;
   document.getElementById("detail-nombre").textContent = pasajero.nombre;
   document.getElementById("detail-rut").textContent = pasajero.rut || "—";
   document.getElementById("detail-telefono").textContent = pasajero.telefono || "—";
@@ -308,18 +341,10 @@ document.querySelectorAll(".seat-sheet").forEach(sheet => {
   });
 });
 
-function parseSeatId(seatId) {
-  const [pisoPart, rowCol] = seatId.split("-");
-  const piso = parseInt(pisoPart.replace("P", ""));
-  const row = parseInt(rowCol.slice(0, -1));
-  const col = rowCol.slice(-1);
-  return { piso, row, col };
-}
-
 function renderRelacionList() {
   const entries = Object.keys(asientos)
-    .map(seatId => ({ seatId, pasajero: PASAJEROS.find(p => p.id === asientos[seatId]), ...parseSeatId(seatId) }))
-    .sort((a, b) => a.piso - b.piso || a.row - b.row || a.col.localeCompare(b.col));
+    .map(num => ({ num: parseInt(num), pasajero: PASAJEROS.find(p => p.id === asientos[num]) }))
+    .sort((a, b) => a.num - b.num);
 
   document.getElementById("relacion-count").textContent =
     `${entries.length} pasajero${entries.length === 1 ? "" : "s"} a bordo`;
@@ -332,7 +357,7 @@ function renderRelacionList() {
 
   list.innerHTML = entries.map(e => `
     <button class="relacion-row" data-id="${e.pasajero.id}">
-      <span class="relacion-seat">${e.row}${e.col} · Piso ${e.piso}</span>
+      <span class="relacion-seat">Asiento ${e.num}</span>
       <span class="relacion-nombre">${e.pasajero.nombre}</span>
     </button>
   `).join("");
@@ -352,8 +377,8 @@ document.getElementById("ver-relacion-btn").addEventListener("click", (e) => {
   document.getElementById("relacion-sheet").classList.add("open");
 });
 
-initContratoSelects();
-initFloorTabs();
+initSelects();
+renderFloorTabs();
 renderSeatGrid();
 </script>
 </body>

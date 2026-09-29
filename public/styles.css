@@ -466,6 +466,11 @@ textarea.template {
   margin-left: 14px;
 }
 
+.seat-empty {
+  border: none;
+  background: transparent;
+}
+
 .seat-num {
   font-size: 10px;
   opacity: 0.8;
