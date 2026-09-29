@@ -154,14 +154,14 @@ function filas2mas1(desde, hasta) {
 
 const BUS_TEMPLATES = {
   "cama": {
-    nombre: "Cama — Volvo B450R (43 asientos)",
+    nombre: "Salón Cama (43 asientos)",
     pisos: [
       { id: 2, nombre: "Piso 2 (arriba)", filas: filas2mas1(1, 32) },
       { id: 1, nombre: "Piso 1 (abajo)", filas: filas2mas1(33, 43) }
     ]
   },
   "semi-cama": {
-    nombre: "Semi Cama — Irizar (42 asientos)",
+    nombre: "Semi Cama (42 asientos)",
     pisos: [
       { id: 1, nombre: "Único piso", filas: filasCorrelativas(1, 42) }
     ],
