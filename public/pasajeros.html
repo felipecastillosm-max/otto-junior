@@ -37,6 +37,7 @@
   </div>
 
   <a class="btn secondary" href="#" id="add-btn">+ Agregar pasajero nuevo</a>
+  <a class="btn secondary" href="#" id="ver-relacion-btn">Ver relación de pasajeros</a>
 
   <div class="card" id="form-nuevo" style="display:none;">
     <div class="section-title">Nuevo pasajero</div>
@@ -57,6 +58,20 @@
     </div>
     <input class="search" placeholder="Buscar nombre..." id="sheet-search" autocomplete="off">
     <div class="seat-sheet-list" id="sheet-list"></div>
+  </div>
+</div>
+
+<div class="seat-sheet" id="relacion-sheet">
+  <div class="seat-sheet-panel relacion-panel">
+    <div class="seat-sheet-header">
+      <div>
+        <div class="seat-sheet-title">Relación de pasajeros</div>
+        <div class="seat-sheet-sub" id="relacion-count"></div>
+      </div>
+      <button class="seat-sheet-close" id="relacion-close">✕</button>
+    </div>
+    <div class="relacion-note">Transcribe esta lista a la hoja oficial de Carabineros al llegar al retén.</div>
+    <div class="seat-sheet-list" id="relacion-list"></div>
   </div>
 </div>
 
@@ -200,6 +215,52 @@ document.getElementById("guardar-btn").addEventListener("click", () => {
   document.getElementById("nuevo-nombre").value = "";
   document.getElementById("nuevo-paradero").value = "";
   document.getElementById("form-nuevo").style.display = "none";
+});
+
+function parseSeatId(seatId) {
+  const [pisoPart, rowCol] = seatId.split("-");
+  const piso = parseInt(pisoPart.replace("P", ""));
+  const row = parseInt(rowCol.slice(0, -1));
+  const col = rowCol.slice(-1);
+  return { piso, row, col };
+}
+
+function renderRelacionList() {
+  const entries = Object.keys(asientos)
+    .map(id => ({ id, nombre: asientos[id], ...parseSeatId(id) }))
+    .sort((a, b) => a.piso - b.piso || a.row - b.row || a.col.localeCompare(b.col));
+
+  document.getElementById("relacion-count").textContent =
+    `${entries.length} pasajero${entries.length === 1 ? "" : "s"} a bordo`;
+
+  const list = document.getElementById("relacion-list");
+  if (entries.length === 0) {
+    list.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:16px;">Todavía no hay asientos asignados</div>';
+    return;
+  }
+
+  list.innerHTML = entries.map(e => `
+    <div class="relacion-row">
+      <span class="relacion-seat">${e.row}${e.col} · Piso ${e.piso}</span>
+      <span class="relacion-nombre">${e.nombre}</span>
+    </div>
+  `).join("");
+}
+
+document.getElementById("ver-relacion-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  renderRelacionList();
+  document.getElementById("relacion-sheet").classList.add("open");
+});
+
+document.getElementById("relacion-close").addEventListener("click", () => {
+  document.getElementById("relacion-sheet").classList.remove("open");
+});
+
+document.getElementById("relacion-sheet").addEventListener("click", (e) => {
+  if (e.target.id === "relacion-sheet") {
+    document.getElementById("relacion-sheet").classList.remove("open");
+  }
 });
 
 initContratoSelect();
