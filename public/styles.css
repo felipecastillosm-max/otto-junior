@@ -258,6 +258,11 @@ header.topbar h1 {
   border: 1px solid #2b2f38;
 }
 
+.btn-orange {
+  background: var(--secondary);
+  color: #ffffff;
+}
+
 .btn.big {
   font-size: 22px;
   padding: 26px;
